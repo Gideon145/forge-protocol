@@ -5,6 +5,7 @@ import PersonaCard from "./PersonaCard";
 import InsightsPanel from "./InsightsPanel";
 import ReinterviewChat from "./ReinterviewChat";
 import ShareButton from "./ShareButton";
+import CohortBreakdown from "./CohortBreakdown";
 
 export default function ReportView({ report }: { report: QuorumReport }) {
   const positive = report.personas.filter((p) => p.sentiment === "positive").length;
@@ -40,6 +41,9 @@ export default function ReportView({ report }: { report: QuorumReport }) {
 
       {/* Insights */}
       <InsightsPanel report={report} />
+
+      {/* Cohort breakdown */}
+      <CohortBreakdown report={report} />
 
       {/* Persona grid */}
       <div>
