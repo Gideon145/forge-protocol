@@ -199,3 +199,18 @@ interface Persona {
   sentiment: "positive" | "neutral" | "negative";
 }
 ```
+
+---
+
+## Hackathon Compliance — BuildWithLocus Week 2
+
+This project was built and submitted for the **PayGentic Week 2 Hackathon** ([devfolio](https://paygentic-week2.devfolio.co/overview)).
+
+| Requirement | How We Met It |
+|---|---|
+| Deployed on BuildWithLocus | ✅ Containerized service `svc_mo84e57ac8gebo8k` — no Dockerfile, no cloud console, no DevOps |
+| Uses Locus API | ✅ All AI inference routes through `POST /wrapped/openai/chat` on the Locus platform |
+| PayWithLocus account | ✅ Funded via PayWithLocus wallet; credits transferred to BuildWithLocus account |
+| Something cool and unique | ✅ Not another demo site — a functional synthetic research tool with a structured scoring engine and 20 engineered personas |
+
+The entire deployment pipeline — build, infrastructure, routing, SSL — is handled by BuildWithLocus. The only commands needed to ship were `git push` and a single API call to trigger a deploy.
