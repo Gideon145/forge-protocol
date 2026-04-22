@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import IdeaForm from "@/components/IdeaForm";
@@ -47,6 +47,14 @@ function RunPageInner() {
     setErrorMsg("");
     setIdeaValue("");
   };
+
+  // Auto-submit when arriving from "Re-run quorum with this idea"
+  useEffect(() => {
+    if (prefillIdea) {
+      handleSubmit(prefillIdea);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#060b14] text-white">

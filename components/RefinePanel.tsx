@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import type { QuorumReport } from "@/lib/types";
 
 export default function RefinePanel({ report }: { report: QuorumReport }) {
   const [state, setState] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [refinedIdea, setRefinedIdea] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter();
 
   async function handleRefine() {
     setState("loading");
@@ -31,7 +29,7 @@ export default function RefinePanel({ report }: { report: QuorumReport }) {
 
   function handleRerun() {
     const params = new URLSearchParams({ idea: refinedIdea });
-    router.push(`/run?${params.toString()}`);
+    window.location.href = `/run?${params.toString()}`;
   }
 
   return (

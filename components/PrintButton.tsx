@@ -8,10 +8,11 @@ export default function PrintButton() {
   async function handleDownload() {
     setLoading(true);
     try {
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+      const [{ default: html2canvas }, jsPDFModule] = await Promise.all([
         import("html2canvas"),
         import("jspdf"),
       ]);
+      const jsPDF = jsPDFModule.jsPDF ?? (jsPDFModule as unknown as { default: typeof jsPDFModule.jsPDF }).default;
 
       // Target the main report container
       const el = document.querySelector("main") as HTMLElement | null;
