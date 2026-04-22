@@ -33,7 +33,7 @@ export default function ReportView({ report }: { report: QuorumReport }) {
       </div>
 
       {/* Target segment + pivot */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div data-no-print className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-blue-500/5 border border-blue-500/15 rounded-2xl p-5">
           <h3 className="text-blue-400 text-xs uppercase tracking-wide font-semibold mb-2">Best Target Segment</h3>
           <p className="text-white/75 text-sm leading-relaxed">{report.targetSegment}</p>
@@ -45,13 +45,13 @@ export default function ReportView({ report }: { report: QuorumReport }) {
       </div>
 
       {/* Insights */}
-      <InsightsPanel report={report} />
+      <div data-no-print><InsightsPanel report={report} /></div>
 
       {/* Cohort breakdown */}
       <CohortBreakdown report={report} />
 
       {/* Refine & re-run */}
-      <RefinePanel report={report} />
+      <div data-no-print><RefinePanel report={report} /></div>
 
       {/* Persona grid */}
       <div>
@@ -73,7 +73,7 @@ export default function ReportView({ report }: { report: QuorumReport }) {
       </div>
 
       {/* Re-interview */}
-      <ReinterviewChat report={report} />
+      <div data-no-print><ReinterviewChat report={report} /></div>
     </div>
   );
 }

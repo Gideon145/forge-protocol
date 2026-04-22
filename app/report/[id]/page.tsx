@@ -27,8 +27,8 @@ export default function SharedReportPage({ params }: { params: Promise<{ id: str
       {/* Navbar */}
       <nav className="relative z-50 border-b border-white/8 px-6 py-4 flex items-center justify-between sticky top-0 bg-[#060b14]/85 backdrop-blur-xl">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center text-xs font-bold shadow-md shadow-blue-500/30">
-            Q
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center shadow-md shadow-blue-500/30">
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="5.5"/><path d="m19 19-3.5-3.5"/><circle cx="10" cy="8.5" r="1.5"/><path d="M7.5 13c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5"/></svg>
           </div>
           <span className="font-bold text-white tracking-tight text-lg group-hover:text-blue-300 transition-colors" style={{ fontFamily: "var(--font-playfair)" }}>
             Quorum Protocol
