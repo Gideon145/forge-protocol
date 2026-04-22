@@ -1,5 +1,5 @@
 import type { QuorumReport } from "@/lib/types";
-import PMFGauge from "./PMFGauge";
+
 import VerdictBadge from "./VerdictBadge";
 import PersonaCard from "./PersonaCard";
 import InsightsPanel from "./InsightsPanel";
@@ -17,7 +17,10 @@ export default function ReportView({ report }: { report: QuorumReport }) {
     <div className="w-full max-w-5xl mx-auto space-y-6 pb-16">
       {/* Top row: gauge + verdict + summary */}
       <div className="bg-gradient-to-br from-blue-500/5 to-transparent border border-blue-500/15 rounded-2xl p-6 flex flex-col md:flex-row gap-6 items-center">
-        <PMFGauge score={report.pmfScore} />
+        <div className="flex flex-col items-center justify-center shrink-0">
+          <span className="text-5xl font-extrabold text-white">{report.pmfScore}</span>
+          <span className="text-white/40 text-sm mt-1">/100 PMF Score</span>
+        </div>
         <div className="flex-1 space-y-3">
           <div className="flex items-start justify-between gap-3 flex-wrap">
             <VerdictBadge verdict={report.verdict} />

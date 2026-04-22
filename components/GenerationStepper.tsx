@@ -67,7 +67,7 @@ export default function GenerationStepper() {
         })}
       </div>
 
-      <p className="text-white/30 text-xs mt-8">This takes 10–20 seconds. Hang tight.</p>
+      <p className="text-white/30 text-xs mt-8">This can take a minute depending on your idea. Hang tight.</p>
     </div>
   );
 }
