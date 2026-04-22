@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import IdeaForm from "@/components/IdeaForm";
 import GenerationStepper from "@/components/GenerationStepper";
@@ -9,11 +10,14 @@ import type { QuorumReport } from "@/lib/types";
 
 type State = "idle" | "loading" | "done" | "error";
 
-export default function RunPage() {
+function RunPageInner() {
+  const searchParams = useSearchParams();
+  const prefillIdea = searchParams.get("idea") ?? "";
+
   const [state, setState] = useState<State>("idle");
   const [report, setReport] = useState<QuorumReport | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [ideaValue, setIdeaValue] = useState("");
+  const [ideaValue, setIdeaValue] = useState(prefillIdea);
 
   const handleSubmit = async (description: string) => {
     setIdeaValue(description);
@@ -84,7 +88,7 @@ export default function RunPage() {
               Be specific — what the product does, who it&apos;s for, how it makes money. The more
               detail you give, the sharper the feedback.
             </p>
-            <IdeaForm onSubmit={handleSubmit} isLoading={false} />
+            <IdeaForm onSubmit={handleSubmit} isLoading={false} defaultValue={prefillIdea} />
           </div>
         )}
 
@@ -141,5 +145,13 @@ export default function RunPage() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export default function RunPage() {
+  return (
+    <Suspense>
+      <RunPageInner />
+    </Suspense>
   );
 }

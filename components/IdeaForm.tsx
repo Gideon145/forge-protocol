@@ -16,10 +16,11 @@ const PLACEHOLDERS = [
 interface IdeaFormProps {
   onSubmit: (description: string) => void;
   isLoading: boolean;
+  defaultValue?: string;
 }
 
-export default function IdeaForm({ onSubmit, isLoading }: IdeaFormProps) {
-  const [value, setValue] = useState("");
+export default function IdeaForm({ onSubmit, isLoading, defaultValue }: IdeaFormProps) {
+  const [value, setValue] = useState(defaultValue ?? "");
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 

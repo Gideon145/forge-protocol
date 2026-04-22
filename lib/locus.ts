@@ -157,6 +157,42 @@ CRITICAL RULES:
   return await locusChat(messages, 300, 0.85);
 }
 
+export async function refineIdea(report: QuorumReport): Promise<string> {
+  const topObjections = report.topObjections.slice(0, 3).join("; ");
+  const topFeatures = report.topFeatureRequests.slice(0, 3).join("; ");
+  const segment = report.targetSegment;
+
+  const systemPrompt = `You are a product strategy expert who rewrites startup ideas to be more compelling and targeted.
+Given a quorum report with objections, feature requests, and a target segment, rewrite the original idea pitch to:
+1. Directly address the top objections
+2. Emphasize the most-requested features
+3. Focus on the best target segment
+4. Be specific, clear, and exciting — 2-4 sentences max
+Return ONLY the refined idea text. No preamble, no labels, no JSON.`;
+
+  const userMessage = `Original idea: "${report.idea}"
+PMF score: ${report.pmfScore}/100
+Top objections: ${topObjections}
+Most wanted features: ${topFeatures}
+Best target segment: ${segment}
+Pivot suggestion: ${report.pivotSuggestion}
+
+Rewrite this idea to address the feedback above. Be concise and compelling.`;
+
+  if (!isLocusConfigured()) {
+    return `${report.idea} — now specifically designed for ${segment}, with ${topFeatures.split(";")[0].trim()} built-in, and addressing concerns about ${topObjections.split(";")[0].trim()}.`;
+  }
+
+  return await locusChat(
+    [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userMessage },
+    ],
+    200,
+    0.7
+  );
+}
+
 // ─── Stub (when API key not configured) ──────────────────────────────────────
 
 function generateStubReport(description: string): QuorumReport {
