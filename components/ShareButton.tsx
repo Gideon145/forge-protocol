@@ -2,27 +2,37 @@
 
 import { useState } from "react";
 import type { QuorumReport } from "@/lib/types";
-import { getShareUrl } from "@/lib/share";
 
 export default function ShareButton({ report }: { report: QuorumReport }) {
   const [copied, setCopied] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   async function handleShare() {
-    const url = getShareUrl(report);
+    setLoading(true);
     try {
+      const res = await fetch("/api/share", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ report }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.id) throw new Error("Failed to create share link");
+      const url = `${window.location.origin}/report/${data.id}`;
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      // Fallback: open the URL directly
-      window.open(url, "_blank");
+      // Silent fail — user can share manually
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <button
       onClick={handleShare}
-      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
+      disabled={loading}
+      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 disabled:opacity-60 ${
         copied
           ? "bg-green-500/10 border-green-500/30 text-green-400"
           : "bg-white/5 border-white/12 text-white/60 hover:text-white hover:bg-white/10 hover:border-white/20"
@@ -34,6 +44,13 @@ export default function ShareButton({ report }: { report: QuorumReport }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
           Link copied!
+        </>
+      ) : loading ? (
+        <>
+          <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 12a8 8 0 018-8v4m0 0a8 8 0 010 16v-4" />
+          </svg>
+          Generating link…
         </>
       ) : (
         <>

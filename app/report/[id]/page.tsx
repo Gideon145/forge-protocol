@@ -1,18 +1,25 @@
 "use client";
 
-import { use, useMemo } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { decodeReport } from "@/lib/share";
 import ReportView from "@/components/ReportView";
+import type { QuorumReport } from "@/lib/types";
 
 export default function SharedReportPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const [report, setReport] = useState<QuorumReport | null | "loading">("loading");
 
-  const report = useMemo(() => {
-    try {
-      return decodeReport(id);
-    } catch {
-      return null;
+  useEffect(() => {
+    // Short IDs (≤12 chars) come from the server store; longer ones are legacy base64
+    if (id.length <= 12) {
+      fetch(`/api/share/${id}`)
+        .then((r) => r.json())
+        .then((data) => setReport(data.report ?? null))
+        .catch(() => setReport(null));
+    } else {
+      // Legacy base64 URL — decode client-side
+      setReport(decodeReport(id));
     }
   }, [id]);
 
@@ -46,7 +53,16 @@ export default function SharedReportPage({ params }: { params: Promise<{ id: str
       </nav>
 
       <main className="relative px-4 py-10">
-        {!report ? (
+        {report === "loading" ? (
+          <div className="flex items-center justify-center py-32">
+            <div className="flex flex-col items-center gap-3">
+              <svg className="w-6 h-6 animate-spin text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 12a8 8 0 018-8v4m0 0a8 8 0 010 16v-4" />
+              </svg>
+              <p className="text-white/40 text-sm">Loading report…</p>
+            </div>
+          </div>
+        ) : !report ? (
           <div className="flex flex-col items-center justify-center py-32 text-center">
             <div className="bg-red-500/8 border border-red-500/20 rounded-2xl p-8 max-w-md">
               <p className="text-red-400 font-semibold mb-2">Invalid report link</p>
