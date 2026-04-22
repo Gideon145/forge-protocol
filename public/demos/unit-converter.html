@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unit Converter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</head>
+<body class="bg-[#080808] text-gray-100 min-h-screen flex flex-col items-center py-12 px-4 font-sans">
+
+  <div
+    x-data="{
+      value: '1',
+      category: 'length',
+      categories: {
+        length: {
+          label: 'Length',
+          units: {
+            meter:      { label: 'Meter (m)',        toBase: 1 },
+            kilometer:  { label: 'Kilometer (km)',   toBase: 1000 },
+            centimeter: { label: 'Centimeter (cm)',  toBase: 0.01 },
+            millimeter: { label: 'Millimeter (mm)',  toBase: 0.001 },
+            mile:       { label: 'Mile (mi)',        toBase: 1609.344 },
+            yard:       { label: 'Yard (yd)',        toBase: 0.9144 },
+            foot:       { label: 'Foot (ft)',        toBase: 0.3048 },
+            inch:       { label: 'Inch (in)',        toBase: 0.0254 },
+          }
+        },
+        weight: {
+          label: 'Weight',
+          units: {
+            kilogram:  { label: 'Kilogram (kg)',  toBase: 1 },
+            gram:      { label: 'Gram (g)',       toBase: 0.001 },
+            pound:     { label: 'Pound (lb)',     toBase: 0.453592 },
+            ounce:     { label: 'Ounce (oz)',     toBase: 0.0283495 },
+            ton:       { label: 'Metric Ton (t)', toBase: 1000 },
+          }
+        },
+        temperature: {
+          label: 'Temperature',
+          units: {
+            celsius:    { label: 'Celsius (°C)',    toBase: null },
+            fahrenheit: { label: 'Fahrenheit (°F)', toBase: null },
+            kelvin:     { label: 'Kelvin (K)',      toBase: null },
+          }
+        },
+        speed: {
+          label: 'Speed',
+          units: {
+            mps:  { label: 'm/s',   toBase: 1 },
+            kph:  { label: 'km/h',  toBase: 0.277778 },
+            mph:  { label: 'mph',   toBase: 0.44704 },
+            knot: { label: 'Knot',  toBase: 0.514444 },
+          }
+        },
+        area: {
+          label: 'Area',
+          units: {
+            sqm:  { label: 'Square Meter (m²)',    toBase: 1 },
+            sqkm: { label: 'Square Kilometer',     toBase: 1e6 },
+            sqft: { label: 'Square Foot (ft²)',    toBase: 0.092903 },
+            acre: { label: 'Acre',                 toBase: 4046.86 },
+            ha:   { label: 'Hectare (ha)',         toBase: 10000 },
+          }
+        },
+      },
+      get units() { return this.categories[this.category].units; },
+      convert(from, to) {
+        const v = parseFloat(this.value);
+        if (isNaN(v)) return '—';
+        if (this.category === 'temperature') {
+          let celsius;
+          if (from === 'celsius') celsius = v;
+          else if (from === 'fahrenheit') celsius = (v - 32) * 5/9;
+          else celsius = v - 273.15;
+          if (to === 'celsius') return this.fmt(celsius);
+          if (to === 'fahrenheit') return this.fmt(celsius * 9/5 + 32);
+          return this.fmt(celsius + 273.15);
+        }
+        const base = v * this.units[from].toBase;
+        return this.fmt(base / this.units[to].toBase);
+      },
+      fmt(n) {
+        if (Math.abs(n) < 0.0001 && n !== 0) return n.toExponential(4);
+        if (Math.abs(n) >= 1e9) return n.toExponential(4);
+        const s = parseFloat(n.toPrecision(6));
+        return s.toLocaleString('en-US', { maximumSignificantDigits: 6 });
+      },
+      inputUnit: 'meter',
+      get unitKeys() { return Object.keys(this.units); }
+    }"
+    x-init="$watch('category', () => { inputUnit = Object.keys(units)[0]; })"
+    class="w-full max-w-md flex flex-col gap-6"
+  >
+    <div class="text-center">
+      <h1 class="text-2xl font-bold mb-1">Unit Converter</h1>
+      <p class="text-zinc-500 text-sm">Convert anything, instantly</p>
+    </div>
+
+    <!-- Category tabs -->
+    <div class="flex flex-wrap gap-1.5">
+      <template x-for="(cat, key) in categories" :key="key">
+        <button
+          @click="category = key"
+          :class="category === key ? 'bg-blue-600 text-white' : 'bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-white hover:border-zinc-600'"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          x-text="cat.label"
+        ></button>
+      </template>
+    </div>
+
+    <!-- Input -->
+    <div class="flex gap-2">
+      <input
+        type="number"
+        x-model="value"
+        placeholder="Enter value"
+        class="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 text-white text-lg font-mono focus:border-blue-500 focus:outline-none transition-colors"
+      />
+      <select
+        x-model="inputUnit"
+        class="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-3 text-white text-sm focus:border-blue-500 focus:outline-none transition-colors"
+      >
+        <template x-for="key in unitKeys" :key="key">
+          <option :value="key" x-text="units[key].label.split('(')[0].trim()"></option>
+        </template>
+      </select>
+    </div>
+
+    <!-- Results -->
+    <div class="flex flex-col gap-2">
+      <template x-for="key in unitKeys" :key="key">
+        <div
+          x-show="key !== inputUnit"
+          class="flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 hover:border-zinc-700 transition-colors"
+        >
+          <span class="text-sm text-zinc-400" x-text="units[key].label"></span>
+          <span class="font-mono text-white text-sm font-medium" x-text="convert(inputUnit, key)"></span>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <footer class="fixed bottom-4 text-xs text-zinc-800">Made with Quorum Protocol · Powered by Locus</footer>
+</body>
+</html>

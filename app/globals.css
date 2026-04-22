@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+body {
+  background: #060b14;
+  color: #e5e7eb;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: #3b82f6;
+  color: #fff;
+}
+
+textarea:focus {
+  outline: none;
+}

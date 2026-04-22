@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Timer — Quorum Protocol</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</head>
+<body class="bg-[#080808] text-gray-100 min-h-screen flex flex-col items-center justify-center p-6 font-sans select-none">
+
+  <div
+    x-data="{
+      mode: 'focus',
+      totalSecs: 25 * 60,
+      remaining: 25 * 60,
+      running: false,
+      sessions: 0,
+      interval: null,
+      modes: {
+        focus:  { label: 'Focus',       secs: 25 * 60, color: 'text-blue-400',    stroke: '#3b82f6' },
+        short:  { label: 'Short Break', secs:  5 * 60, color: 'text-emerald-400', stroke: '#10b981' },
+        long:   { label: 'Long Break',  secs: 15 * 60, color: 'text-sky-300',     stroke: '#7dd3fc' }
+      },
+      get progress() { return (this.remaining / this.totalSecs) * 283; },
+      get mins() { return String(Math.floor(this.remaining / 60)).padStart(2, '0'); },
+      get secs() { return String(this.remaining % 60).padStart(2, '0'); },
+      get modeColor() { return this.modes[this.mode].color; },      get modeStroke() { return this.modes[this.mode].stroke; },      setMode(m) {
+        this.stop();
+        this.mode = m;
+        this.totalSecs = this.modes[m].secs;
+        this.remaining = this.modes[m].secs;
+      },
+      toggle() {
+        if (this.running) { this.stop(); return; }
+        this.running = true;
+        this.interval = setInterval(() => {
+          if (this.remaining <= 0) {
+            this.stop();
+            if (this.mode === 'focus') this.sessions++;
+            new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU').play().catch(()=>{});
+            return;
+          }
+          this.remaining--;
+        }, 1000);
+      },
+      stop() {
+        this.running = false;
+        clearInterval(this.interval);
+        this.interval = null;
+      },
+      reset() { this.stop(); this.remaining = this.totalSecs; }
+    }"
+    class="flex flex-col items-center gap-8 w-full max-w-sm"
+  >
+    <!-- Mode tabs -->
+    <div class="flex gap-1 bg-zinc-900 border border-zinc-800 rounded-xl p-1">
+      <template x-for="(cfg, key) in modes" :key="key">
+        <button
+          @click="setMode(key)"
+          :class="mode === key ? 'bg-zinc-700 text-white' : 'text-zinc-500 hover:text-zinc-300'"
+          class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all"
+          x-text="cfg.label"
+        ></button>
+      </template>
+    </div>
+
+    <!-- Ring timer -->
+    <div class="relative flex items-center justify-center">
+      <svg class="w-56 h-56 -rotate-90" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#27272a" stroke-width="4"/>
+        <circle
+          cx="50" cy="50" r="45" fill="none"
+          :stroke="modeStroke"
+          stroke-width="4"
+          stroke-linecap="round"
+          :stroke-dasharray="283"
+          :stroke-dashoffset="283 - progress"
+          class="transition-all duration-1000"
+        />
+      </svg>
+      <div class="absolute flex flex-col items-center">
+        <span class="text-5xl font-bold font-mono tracking-tight" :class="modeColor">
+          <span x-text="mins"></span>:<span x-text="secs"></span>
+        </span>
+        <span class="text-xs text-zinc-500 mt-1 uppercase tracking-widest" x-text="modes[mode].label"></span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-4">
+      <button
+        @click="reset()"
+        class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-400 hover:text-white hover:border-zinc-600 transition-all"
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      </button>
+      <button
+        @click="toggle()"
+        :class="running ? 'bg-zinc-700 hover:bg-zinc-600' : 'bg-blue-600 hover:bg-blue-500'"
+        class="w-16 h-16 rounded-full text-white font-bold text-sm transition-all shadow-lg flex items-center justify-center"
+      >
+        <svg x-show="!running" class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <svg x-show="running" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <div class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex flex-col items-center justify-center gap-0.5">
+        <span class="text-xs font-bold text-blue-400" x-text="sessions"></span>
+        <span class="text-[9px] text-zinc-600 uppercase tracking-wider">done</span>
+      </div>
+    </div>
+
+    <!-- Session count -->
+    <p class="text-zinc-600 text-xs" x-text="`${sessions} session${sessions !== 1 ? 's' : ''} completed today`"></p>
+  </div>
+
+  <footer class="fixed bottom-4 text-xs text-zinc-800">Made with Quorum Protocol · Powered by Locus</footer>
+</body>
+</html>

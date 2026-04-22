@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bill Splitter</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+</head>
+<body class="bg-[#080808] text-gray-100 min-h-screen flex flex-col items-center py-12 px-4 font-sans">
+
+  <div
+    x-data="{
+      bill: '',
+      tip: 15,
+      people: 2,
+      get billNum() { return parseFloat(this.bill) || 0; },
+      get tipAmount() { return this.billNum * this.tip / 100; },
+      get total() { return this.billNum + this.tipAmount; },
+      get perPerson() { return this.people > 0 ? this.total / this.people : 0; },
+      get tipPerPerson() { return this.people > 0 ? this.tipAmount / this.people : 0; },
+      fmt(n) { return n.toFixed(2); },
+      tips: [10, 15, 18, 20, 25],
+    }"
+    class="w-full max-w-sm flex flex-col gap-6"
+  >
+    <div class="text-center">
+      <h1 class="text-2xl font-bold mb-1">Bill Splitter</h1>
+      <p class="text-zinc-500 text-sm">Split any bill, fairly</p>
+    </div>
+
+    <!-- Bill amount -->
+    <div class="space-y-2">
+      <label class="text-sm text-zinc-400">Bill amount</label>
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">$</span>
+        <input
+          type="number" min="0" step="0.01"
+          x-model="bill"
+          placeholder="0.00"
+          class="w-full bg-zinc-900 border border-zinc-800 rounded-xl pl-8 pr-4 py-3 text-white text-lg font-mono focus:border-blue-500 focus:outline-none transition-colors"
+        />
+      </div>
+    </div>
+
+    <!-- Tip selector -->
+    <div class="space-y-2">
+      <label class="text-sm text-zinc-400">Tip — <span class="text-white font-medium" x-text="tip + '%'"></span></label>
+      <div class="flex gap-2">
+        <template x-for="t in tips" :key="t">
+          <button
+            @click="tip = t"
+            :class="tip === t ? 'bg-blue-600 text-white border-blue-600' : 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:border-zinc-600'"
+            class="flex-1 border rounded-lg py-2 text-sm font-medium transition-all"
+            x-text="t + '%'"
+          ></button>
+        </template>
+      </div>
+      <input
+        type="range" min="0" max="30" step="1"
+        x-model.number="tip"
+        class="w-full accent-blue-500"
+      />
+    </div>
+
+    <!-- People count -->
+    <div class="space-y-2">
+      <label class="text-sm text-zinc-400">Split between</label>
+      <div class="flex items-center gap-4">
+        <button
+          @click="people = Math.max(1, people - 1)"
+          class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 hover:border-zinc-600 flex items-center justify-center text-xl text-zinc-300 transition-colors"
+        >−</button>
+        <span class="flex-1 text-center text-2xl font-bold" x-text="people + (people === 1 ? ' person' : ' people')"></span>
+        <button
+          @click="people++"
+          class="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 hover:border-zinc-600 flex items-center justify-center text-xl text-zinc-300 transition-colors"
+        >+</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+      <div class="p-5 border-b border-zinc-800">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-zinc-400 text-sm">Each person pays</span>
+        </div>
+        <div class="text-4xl font-bold text-blue-400 font-mono" x-text="'$' + fmt(perPerson)"></div>
+      </div>
+      <div class="grid grid-cols-3 divide-x divide-zinc-800">
+        <div class="p-3 text-center">
+          <div class="text-xs text-zinc-500 mb-1">Subtotal</div>
+          <div class="font-mono text-sm text-white" x-text="'$' + fmt(billNum)"></div>
+        </div>
+        <div class="p-3 text-center">
+          <div class="text-xs text-zinc-500 mb-1">Tip</div>
+          <div class="font-mono text-sm text-white" x-text="'$' + fmt(tipAmount)"></div>
+        </div>
+        <div class="p-3 text-center">
+          <div class="text-xs text-zinc-500 mb-1">Total</div>
+          <div class="font-mono text-sm text-white" x-text="'$' + fmt(total)"></div>
+        </div>
+      </div>
+    </div>
+
+    <p x-show="people > 1" class="text-center text-xs text-zinc-600" x-text="`Tip per person: $${fmt(tipPerPerson)}`"></p>
+  </div>
+
+  <footer class="fixed bottom-4 text-xs text-zinc-800">Made with Quorum Protocol · Powered by Locus</footer>
+</body>
+</html>
