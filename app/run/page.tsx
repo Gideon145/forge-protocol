@@ -3,12 +3,13 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { LocusCheckout } from "@withlocus/checkout-react";
 import IdeaForm from "@/components/IdeaForm";
 import GenerationStepper from "@/components/GenerationStepper";
 import ReportView from "@/components/ReportView";
-import type { QuorumReport } from "@/lib/types";
+import type { QuorumReport, Tier } from "@/lib/types";
 
-type State = "idle" | "loading" | "done" | "error";
+type State = "idle" | "checkout" | "loading" | "done" | "error";
 
 function RunPageInner() {
   const searchParams = useSearchParams();
@@ -18,21 +19,64 @@ function RunPageInner() {
   const [report, setReport] = useState<QuorumReport | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [ideaValue, setIdeaValue] = useState(prefillIdea);
+  const [tierValue, setTierValue] = useState<Tier>("full");
+  const [sessionId, setSessionId] = useState<string | null>(null);
 
-  const handleSubmit = async (description: string) => {
+  // Step 1: user clicks Run Quorum — create checkout session, show popup
+  const handleSubmit = async (description: string, tier: Tier) => {
     setIdeaValue(description);
-    setState("loading");
+    setTierValue(tier);
     setErrorMsg("");
     setReport(null);
 
     try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description, tier }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error ?? "Failed to create checkout session");
+      setSessionId(data.sessionId);
+      setState("checkout");
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : "Something went wrong");
+      setState("error");
+    }
+  };
+
+  // Step 2: payment confirmed — run generation
+  const handlePaymentSuccess = async () => {
+    setState("loading");
+    try {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description }),
+        body: JSON.stringify({ description: ideaValue, tier: tierValue }),
       });
       const data = await res.json();
       if (!res.ok || data.error) throw new Error(data.error ?? "Generation failed");
+      setReport(data.report);
+      setState("done");
+    } catch (e) {
+      setErrorMsg(e instanceof Error ? e.message : "Something went wrong");
+      setState("error");
+    }
+  };
+
+  // Free demo — skips checkout, uses stub
+  const handleDemo = async () => {
+    setState("loading");
+    setIdeaValue("A B2B SaaS tool for automating procurement workflows");
+    setTierValue("full");
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: "A B2B SaaS tool for automating procurement workflows", demo: true }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error ?? "Demo failed");
       setReport(data.report);
       setState("done");
     } catch (e) {
@@ -46,12 +90,13 @@ function RunPageInner() {
     setReport(null);
     setErrorMsg("");
     setIdeaValue("");
+    setSessionId(null);
   };
 
   // Auto-submit when arriving from "Re-run quorum with this idea"
   useEffect(() => {
     if (prefillIdea) {
-      handleSubmit(prefillIdea);
+      handleSubmit(prefillIdea, "full");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -97,6 +142,32 @@ function RunPageInner() {
               detail you give, the sharper the feedback.
             </p>
             <IdeaForm onSubmit={handleSubmit} isLoading={false} defaultValue={prefillIdea} />
+            <button
+              onClick={handleDemo}
+              className="mt-4 text-white/35 hover:text-white/60 text-xs transition-colors underline underline-offset-2"
+            >
+              or try a free demo &rarr;
+            </button>
+          </div>
+        )}
+
+        {state === "checkout" && sessionId && (
+          <div className="flex flex-col items-center max-w-md mx-auto py-8">
+            <h2 className="text-xl font-bold text-white mb-2">Complete Payment</h2>
+            <p className="text-white/45 text-sm mb-6 text-center">
+              Pay with USDC to run your quorum on{" "}
+              <span className="text-white/70 italic">&ldquo;{ideaValue.slice(0, 60)}{ideaValue.length > 60 ? "\u2026" : ""}&rdquo;</span>
+            </p>
+            <LocusCheckout
+              sessionId={sessionId}
+              mode="embedded"
+              onSuccess={handlePaymentSuccess}
+              onCancel={reset}
+              onError={(e: Error) => {
+                setErrorMsg(e?.message ?? "Payment failed");
+                setState("error");
+              }}
+            />
           </div>
         )}
 
@@ -115,7 +186,7 @@ function RunPageInner() {
 
         {state === "done" && report && (
           <div className="flex flex-col items-center">
-            <ReportView report={report} />
+            <ReportView report={report} tier={tierValue} />
           </div>
         )}
 

@@ -1,5 +1,6 @@
-import type { QuorumReport, ReinterviewResponse, Persona, PersonaChatMessage } from "./types";
-import { GENERATE_SYSTEM_PROMPT, REINTERVIEW_SYSTEM_PROMPT } from "./prompts";
+import type { QuorumReport, ReinterviewResponse, Persona, PersonaChatMessage, Tier } from "./types";
+import { TIERS } from "./types";
+import { buildGeneratePrompt, REINTERVIEW_SYSTEM_PROMPT } from "./prompts";
 
 const LOCUS_BASE =
   process.env.LOCUS_API_BASE ?? "https://beta-api.paywithlocus.com/api";
@@ -54,17 +55,61 @@ function stripFences(raw: string): string {
     .trim();
 }
 
-export async function runQuorum(description: string): Promise<QuorumReport> {
+export async function searchMarketContext(description: string): Promise<string> {
+  try {
+    const res = await fetch(`${LOCUS_BASE}/wrapped/brave/search`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOCUS_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        q: `${description} market competitors trends 2024 2025`,
+        count: 5,
+      }),
+    });
+
+    if (!res.ok) return "";
+    const data = await res.json();
+    if (!data.success) return "";
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const results: Array<{ title: string; description?: string; url: string }> =
+      data.data?.results ?? data.data?.web?.results ?? [];
+
+    if (!results.length) return "";
+
+    return results
+      .slice(0, 5)
+      .map((r, i) => `${i + 1}. ${r.title}${r.description ? " — " + r.description : ""}`)
+      .join("\n");
+  } catch {
+    return "";
+  }
+}
+
+export async function runQuorum(description: string, tier: Tier = "full"): Promise<QuorumReport> {
   if (!isLocusConfigured()) {
     return generateStubReport(description);
   }
 
+  const config = TIERS[tier];
+  const personaCount = config.personaCount;
+
+  let marketContext: string | undefined;
+  if (config.useBraveSearch) {
+    marketContext = await searchMarketContext(description);
+  }
+
+  const systemPrompt = buildGeneratePrompt(personaCount, marketContext || undefined);
+  const tokenBudget = personaCount === 10 ? 2200 : 4000;
+
   const raw = await locusChat(
     [
-      { role: "system", content: GENERATE_SYSTEM_PROMPT },
+      { role: "system", content: systemPrompt },
       { role: "user", content: `My idea: ${description}` },
     ],
-    4000,
+    tokenBudget,
     0.8
   );
 
@@ -77,13 +122,13 @@ export async function runQuorum(description: string): Promise<QuorumReport> {
     // Retry once with stricter instruction
     const retry = await locusChat(
       [
-        { role: "system", content: GENERATE_SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt },
         {
           role: "user",
           content: `My idea: ${description}. IMPORTANT: Output ONLY the raw JSON object. No markdown, no backticks, no explanation. Start with { and end with }`,
         },
       ],
-      4000,
+      tokenBudget,
       0.5
     );
     report = JSON.parse(stripFences(retry));

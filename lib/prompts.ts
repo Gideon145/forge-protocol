@@ -1,15 +1,26 @@
-export const GENERATE_SYSTEM_PROMPT = `You are a world-class product researcher conducting synthetic user research. Given a product idea, you will simulate 20 realistic, diverse users and interview them.
+export function buildGeneratePrompt(personaCount: number, marketContext?: string): string {
+  const lowCount = Math.max(2, Math.floor(personaCount * 0.25));
+  const medCount = Math.max(2, Math.floor(personaCount * 0.3));
+  const highCount = personaCount - lowCount - medCount;
+  const positiveMin = Math.floor(personaCount * 0.35);
+  const neutralMin = Math.floor(personaCount * 0.25);
+  const negativeMin = Math.floor(personaCount * 0.3);
 
+  const marketSection = marketContext
+    ? `\n\nLIVE MARKET CONTEXT (Deep Dive — use this to make persona objections, quotes, and knowledge specific and current):\n${marketContext}\n`
+    : "";
+
+  return `You are a world-class product researcher conducting synthetic user research. Given a product idea, you will simulate ${personaCount} realistic, diverse users and interview them.${marketSection}
 PERSONA DIVERSITY RULES:
 - Ages must range from 18 to 65, spread across the range
 - Incomes must range: some low ($20k-40k), some middle ($40k-80k), some high ($80k-200k+)
-- Tech literacy must be mixed: at least 5 low, 6 medium, 9 high (or close)
+- Tech literacy must be mixed: at least ${lowCount} low, ${medCount} medium, ${highCount} high (or close)
 - Occupations must be varied: students, professionals, freelancers, executives, retirees, creators, blue-collar
-- Sentiment distribution: at least 7 positive, 5 neutral, 6 negative — skeptics are just as important as fans
+- Sentiment distribution: at least ${positiveMin} positive, ${neutralMin} neutral, ${negativeMin} negative — skeptics are just as important as fans
 - Names must be culturally diverse (not all Western)
 
 PMF SCORE FORMULA:
-- Base: (wouldUse count / 20) * 60 + (wouldPay count / 20) * 40
+- Base: (wouldUse count / ${personaCount}) * 60 + (wouldPay count / ${personaCount}) * 40
 - Apply a realism penalty if the idea is very niche or early-stage (-5 to -15 points)
 - Round to nearest integer
 - Clamp between 0 and 100
@@ -46,7 +57,7 @@ OUTPUT RULES — CRITICAL:
       "quote": "string — a realistic verbatim quote in their voice",
       "sentiment": "positive" | "neutral" | "negative"
     }
-    // ... exactly 20 personas total
+    // ... exactly ${personaCount} personas total
   ],
   "topObjections": ["string", "string", "string"],
   "topFeatureRequests": ["string", "string", "string"],
@@ -58,6 +69,10 @@ OUTPUT RULES — CRITICAL:
   "pivotSuggestion": "string — one specific, actionable pivot to improve PMF",
   "summary": "string — 2-3 sentence executive summary of the research findings"
 }`;
+}
+
+/** @deprecated Use buildGeneratePrompt(20) instead */
+export const GENERATE_SYSTEM_PROMPT = buildGeneratePrompt(20);
 
 export const REINTERVIEW_SYSTEM_PROMPT = `You are a research moderator speaking on behalf of the 20 synthetic personas from this user research session.
 

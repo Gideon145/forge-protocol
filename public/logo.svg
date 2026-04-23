@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1d4ed8"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="200" height="200" rx="40" fill="url(#bg)"/>
+
+  <!-- Subtle inner glow -->
+  <rect width="200" height="200" rx="40" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+
+  <!-- Scanner circle (search/scan motif) -->
+  <circle cx="92" cy="92" r="38" fill="none" stroke="white" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Scanner handle -->
+  <line x1="120" y1="120" x2="148" y2="148" stroke="white" stroke-width="10" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Inner iris dot — the "quorum" center -->
+  <circle cx="92" cy="86" r="9" fill="white" opacity="0.9"/>
+
+  <!-- Persona arc — 3 small dots suggesting a panel of people -->
+  <path d="M 66 108 Q 92 122 118 108" fill="none" stroke="white" stroke-width="7" stroke-linecap="round" opacity="0.85"/>
+</svg>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1200px;
+    height: 628px;
+    overflow: hidden;
+    background: #060b14;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  /* Grid bg */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Glow blobs */
+  .blob1 {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 65%);
+    top: -250px; left: -150px;
+  }
+  .blob2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6,182,212,0.09) 0%, transparent 65%);
+    bottom: -150px; right: -80px;
+  }
+
+  .layout {
+    position: relative;
+    z-index: 10;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    height: 100%;
+  }
+
+  .vline {
+    width: 1px;
+    background: linear-gradient(to bottom, transparent 5%, rgba(99,102,241,0.25) 30%, rgba(99,102,241,0.25) 70%, transparent 95%);
+    margin: 0 auto;
+  }
+
+  /* LEFT */
+  .left {
+    padding: 50px 52px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .project-tag {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: rgba(99,102,241,0.7);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+
+  .logo-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 24px rgba(59,130,246,0.45);
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 58px;
+    font-weight: 900;
+    line-height: 1.0;
+    color: #fff;
+    letter-spacing: -0.03em;
+  }
+  h1 span { color: #818cf8; }
+
+  .tagline {
+    font-size: 15px;
+    color: rgba(255,255,255,0.38);
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    margin-top: 4px;
+    text-transform: uppercase;
+    max-width: 380px;
+  }
+
+  .score-block {
+    margin-top: 32px;
+  }
+  .score-num {
+    font-size: 64px;
+    font-weight: 900;
+    color: #eab308;
+    letter-spacing: -0.03em;
+    text-shadow: 0 0 32px rgba(234,179,8,0.4);
+    line-height: 1;
+  }
+  .score-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: rgba(255,255,255,0.28);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  .bottom-pills {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 5px 12px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+  }
+
+  /* RIGHT */
+  .right {
+    padding: 40px 48px 40px 52px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: rgba(99,102,241,0.55);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .persona-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+
+  .persona-card {
+    background: rgba(99,102,241,0.05);
+    border: 1px solid rgba(99,102,241,0.14);
+    border-radius: 6px;
+    padding: 11px 13px;
+  }
+  .persona-card .name {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.82);
+    letter-spacing: 0.03em;
+  }
+  .persona-card .meta {
+    font-size: 10px;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .persona-card .badge {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 2px 7px;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .badge.positive { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+  .badge.negative { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.18); }
+  .badge.neutral { background: rgba(234,179,8,0.1); color: #fbbf24; border: 1px solid rgba(234,179,8,0.18); }
+
+  .hline {
+    height: 1px;
+    background: linear-gradient(to right, rgba(99,102,241,0.18), transparent);
+  }
+
+  .verdict-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .verdict-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #eab308;
+    box-shadow: 0 0 10px rgba(234,179,8,0.6);
+    flex-shrink: 0;
+  }
+  .verdict-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #eab308;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .verdict-sub {
+    font-size: 10px;
+    color: rgba(255,255,255,0.28);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .live-strip {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px #4ade80;
+  }
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+
+  <div class="layout">
+    <!-- LEFT PANEL -->
+    <div class="left">
+      <div>
+        <div class="project-tag">PayGentic Week 2 · BuildWithLocus</div>
+        <div class="logo-row">
+          <div class="logo-icon">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="5.5"/>
+              <path d="m19 19-3.5-3.5"/>
+              <circle cx="10" cy="8.5" r="1.5" fill="white" stroke="none"/>
+              <path d="M7.5 13c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5"/>
+            </svg>
+          </div>
+          <h1>QUORUM<br><span>PROTOCOL</span></h1>
+        </div>
+        <div class="tagline">20 synthetic personas · PMF scoring · refine &amp; re-run</div>
+      </div>
+
+      <div class="score-block">
+        <div class="score-num">62<span style="font-size:32px;color:rgba(255,255,255,0.3)">/100</span></div>
+        <div class="score-label">PMF Score · Niche Viable</div>
+        <div class="bottom-pills">
+          <div class="pill">Next.js 15</div>
+          <div class="pill">Locus API</div>
+          <div class="pill">BuildWithLocus</div>
+          <div class="pill">gpt-4o-mini</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vline"></div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right">
+      <div>
+        <div class="section-label">The Panel — 20 Personas</div>
+        <div class="persona-grid">
+          <div class="persona-card">
+            <div class="name">Amara Osei</div>
+            <div class="meta">28 · Product Manager · $72k</div>
+            <div class="badge positive">Would pay</div>
+          </div>
+          <div class="persona-card">
+            <div class="name">Derek Hoffman</div>
+            <div class="meta">54 · Small Biz Owner · $90k</div>
+            <div class="badge negative">Hard pass</div>
+          </div>
+          <div class="persona-card">
+            <div class="name">Priya Nair</div>
+            <div class="meta">23 · CS Student · $18k</div>
+            <div class="badge positive">Would use</div>
+          </div>
+          <div class="persona-card">
+            <div class="name">Carlos Mendez</div>
+            <div class="meta">41 · Freelancer · $55k</div>
+            <div class="badge neutral">On the fence</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hline"></div>
+
+      <div>
+        <div class="section-label">Verdict</div>
+        <div class="verdict-row">
+          <div class="verdict-dot"></div>
+          <div>
+            <div class="verdict-text">Niche Viable</div>
+            <div class="verdict-sub">45% willing to pay · avg $18/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hline"></div>
+
+      <div>
+        <div class="section-label">After the quorum</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-top:2px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.04em;">→ Re-interview the panel on any follow-up</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.04em;">→ AI rewrites your idea to fix top objections</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.45);letter-spacing:0.04em;">→ Re-run a fresh quorum on the improved idea</div>
+        </div>
+      </div>
+
+      <div class="live-strip">
+        <div class="live-dot"></div>
+        <span>Live · svc-mo84e57ac8gebo8k.buildwithlocus.com</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

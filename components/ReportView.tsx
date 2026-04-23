@@ -1,4 +1,4 @@
-import type { QuorumReport } from "@/lib/types";
+import type { QuorumReport, Tier } from "@/lib/types";
 
 import VerdictBadge from "./VerdictBadge";
 import PersonaCard from "./PersonaCard";
@@ -8,7 +8,7 @@ import ShareButton from "./ShareButton";
 import CohortBreakdown from "./CohortBreakdown";
 import RefinePanel from "./RefinePanel";
 
-export default function ReportView({ report }: { report: QuorumReport }) {
+export default function ReportView({ report, tier }: { report: QuorumReport; tier?: Tier }) {
   const positive = report.personas.filter((p) => p.sentiment === "positive").length;
   const neutral = report.personas.filter((p) => p.sentiment === "neutral").length;
   const negative = report.personas.filter((p) => p.sentiment === "negative").length;
@@ -20,6 +20,12 @@ export default function ReportView({ report }: { report: QuorumReport }) {
         <div className="flex flex-col items-center justify-center shrink-0">
           <span className="text-5xl font-extrabold text-white">{report.pmfScore}</span>
           <span className="text-white/40 text-sm mt-1">/<span className="font-extrabold text-white">100</span> PMF Score</span>
+          {tier === "deep-dive" && (
+            <span className="mt-2 inline-flex items-center gap-1 bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+              <span className="w-1 h-1 rounded-full bg-purple-400" />
+              Deep Dive · Live Market Data
+            </span>
+          )}
         </div>
         <div className="flex-1 space-y-3">
           <div className="flex items-start justify-between gap-3 flex-wrap">
