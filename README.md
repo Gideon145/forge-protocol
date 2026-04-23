@@ -258,6 +258,18 @@ https://youtu.be/nPXiCIZkvnw
 
 ---
 
+## Live Payment Proof
+
+Real USDC payment processed through Locus on Base — Apr 22, 2026.
+
+| Payment Complete | Locus Purchases Dashboard |
+|---|---|
+| ![Payment Complete](screenshots/payment-complete.png) | ![Locus Purchases Confirmed](screenshots/locus-purchases-confirmed.png) |
+
+**Transaction:** [`0x0a04e8dc...983a7`](https://basescan.org/tx/0x0a04e8dc2a161b6634f5004f4190b3ae92d873af16f66e33698b4860e85983a7) — 0.50 USDC · Deep Dive — Quorum Protocol · Base mainnet · CONFIRMED
+
+---
+
 ## Hackathon Compliance — BuildWithLocus Week 2
 
 This project was built and submitted for the **PayGentic Week 2 Hackathon** ([devfolio](https://paygentic-week2.devfolio.co/overview)).
