@@ -123,13 +123,7 @@ function RunPageInner() {
               Be specific — what the product does, who it&apos;s for, how it makes money. The more
               detail you give, the sharper the feedback.
             </p>
-            <IdeaForm onSubmit={handleSubmit} isLoading={false} defaultValue={prefillIdea} />
-            <button
-              onClick={() => runGeneration("A fish farm that sells directly to restaurants using an app", "full")}
-              className="mt-4 text-white/35 hover:text-white/60 text-xs transition-colors underline underline-offset-2"
-            >
-              or try a free demo →
-            </button>
+            <IdeaForm onSubmit={handleSubmit} onDemoSubmit={runGeneration} isLoading={false} defaultValue={prefillIdea} />
           </div>
         )}
 

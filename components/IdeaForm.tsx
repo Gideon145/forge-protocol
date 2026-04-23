@@ -19,11 +19,12 @@ const TIER_ORDER: Tier[] = ["quick", "full", "deep-dive"];
 
 interface IdeaFormProps {
   onSubmit: (description: string, tier: Tier) => void;
+  onDemoSubmit?: (description: string, tier: Tier) => void;
   isLoading: boolean;
   defaultValue?: string;
 }
 
-export default function IdeaForm({ onSubmit, isLoading, defaultValue }: IdeaFormProps) {
+export default function IdeaForm({ onSubmit, onDemoSubmit, isLoading, defaultValue }: IdeaFormProps) {
   const [value, setValue] = useState(defaultValue ?? "");
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const [tier, setTier] = useState<Tier>("full");
@@ -133,6 +134,19 @@ export default function IdeaForm({ onSubmit, isLoading, defaultValue }: IdeaForm
           <span className="ml-1.5">→</span>
         </button>
       </div>
+
+      {onDemoSubmit && (
+        <div className="flex justify-center mt-3">
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => onDemoSubmit(value.trim().length >= 5 ? value.trim() : "A fish farm that sells directly to restaurants using an app", tier)}
+            className="text-white/35 hover:text-white/60 text-xs transition-colors underline underline-offset-2 disabled:opacity-40"
+          >
+            or try a free demo →
+          </button>
+        </div>
+      )}
     </form>
   );
 }
