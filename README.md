@@ -7,6 +7,7 @@
 [![Live App](https://img.shields.io/badge/Live%20App-svc--mo84e57ac8gebo8k.buildwithlocus.com-cyan)](https://svc-mo84e57ac8gebo8k.buildwithlocus.com)
 [![Deployed on BuildWithLocus](https://img.shields.io/badge/Deployed%20on-BuildWithLocus-blue)](https://beta.buildwithlocus.com)
 [![Powered by Locus API](https://img.shields.io/badge/AI-Locus%20Wrapped%20OpenAI-purple)](https://beta.paywithlocus.com)
+[![Demo Video](https://img.shields.io/badge/Demo-YouTube-red)](https://youtu.be/nPXiCIZkvnw)
 
 ---
 
@@ -202,6 +203,14 @@ interface Persona {
 
 ---
 
+## Demo Video
+
+[![Watch on YouTube](https://img.shields.io/badge/Watch-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/nPXiCIZkvnw)
+
+https://youtu.be/nPXiCIZkvnw
+
+---
+
 ## Hackathon Compliance — BuildWithLocus Week 2
 
 This project was built and submitted for the **PayGentic Week 2 Hackathon** ([devfolio](https://paygentic-week2.devfolio.co/overview)).
@@ -212,5 +221,6 @@ This project was built and submitted for the **PayGentic Week 2 Hackathon** ([de
 | Uses Locus API | ✅ All AI inference routes through `POST /wrapped/openai/chat` on the Locus platform |
 | PayWithLocus account | ✅ Funded via PayWithLocus wallet; credits transferred to BuildWithLocus account |
 | Something cool and unique | ✅ Not another demo site — a functional synthetic research tool with a structured scoring engine and 20 engineered personas |
+| Demo video | ✅ [https://youtu.be/nPXiCIZkvnw](https://youtu.be/nPXiCIZkvnw) |
 
 The entire deployment pipeline — build, infrastructure, routing, SSL — is handled by BuildWithLocus. The only commands needed to ship were `git push` and a single API call to trigger a deploy.
