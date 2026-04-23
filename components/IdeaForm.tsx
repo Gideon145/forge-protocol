@@ -136,14 +136,16 @@ export default function IdeaForm({ onSubmit, onDemoSubmit, isLoading, defaultVal
       </div>
 
       {onDemoSubmit && (
-        <div className="flex justify-center mt-3">
+        <div className="flex justify-center mt-4">
           <button
             type="button"
             disabled={isLoading || value.trim().length < 5}
             onClick={() => onDemoSubmit(value.trim(), tier)}
-            className="text-white/35 hover:text-white/60 text-xs transition-colors underline underline-offset-2 disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/20 hover:border-cyan-400/50 bg-white/5 hover:bg-cyan-500/10 text-white/60 hover:text-cyan-300 text-sm font-medium transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-white/20 disabled:hover:bg-white/5 disabled:hover:text-white/60"
           >
-            or try a free demo →
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 opacity-80" />
+            Try free demo with your idea
+            <span>→</span>
           </button>
         </div>
       )}
