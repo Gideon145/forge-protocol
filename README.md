@@ -271,6 +271,15 @@ interface Persona {
 
 ---
 
+## How to Try It
+
+1. Go to [https://svc-mo84e57ac8gebo8k.buildwithlocus.com/run](https://svc-mo84e57ac8gebo8k.buildwithlocus.com/run)
+2. Pick a tier (Quick Scan, Full Panel, or Deep Dive)
+3. **Type your idea** in the text box
+4. Hit **"Try free demo with your idea →"** — runs a real quorum on your idea for free
+
+---
+
 ## Report Preview
 
 > A real quorum report on **"A fish farm that sells directly to restaurants using an app"** — scored 58/100 (Niche Viable). 14/20 personas said they'd use it. The top objection: *"I already have distributor relationships. Why would I switch to an app?"* The top feature request: *live inventory + same-day booking*. [Try it free →](https://svc-mo84e57ac8gebo8k.buildwithlocus.com/run)
