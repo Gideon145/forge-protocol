@@ -55,6 +55,8 @@ Every quorum run is paid in USDC via **Locus Checkout** — no accounts, no cred
 
 Payment is completed through the **Locus Checkout popup** — users can pay with a Locus Wallet, MetaMask, or any WalletConnect wallet. Reports are generated immediately after on-chain confirmation.
 
+> **Note:** The Locus Checkout payment gate is currently disabled. BuildWithLocus's hosted checkout page does not redirect back to the app after a successful payment, leaving users unable to retrieve their report. Payments were confirmed working on-chain (see [Live Payment Proof](#live-payment-proof)) — the issue is on Locus's end. Checkout will be re-enabled once they ship the fix.
+
 ### Free Demo
 Not ready to pay? There's a "try a free demo" link on the run page that loads a pre-generated stub report — no payment, no API key required. The full UI is explorable.
 
